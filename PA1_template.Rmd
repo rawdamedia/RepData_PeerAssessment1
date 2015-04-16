@@ -34,8 +34,23 @@ file.remove(c(list.files(path = "unzipped", recursive = TRUE, full.names = TRUE)
 ```
 
 ## What is mean total number of steps taken per day?
+There are a lot of NA's in the step count:
+```{r display_na}
+str(activity)
+```
+I will therefore remove the NA's before calculating the daily total step count:
+```{r daily_totals}
+daily_totals <- activity %>% group_by(date) %>% na.omit %>% summarise(total = sum(steps))
+daily_totals
+```
+This allows me to plot the required histogram:
+```{r daily_totals_hist}
+hist(daily_totals$total)
+```
 
+The mean number of steps is `r format(mean(daily_totals$total), scientific=F, big.mark=",")`.  
 
+The median number of steps is `r format(median(daily_totals$total), scientific=F, big.mark=",")`.  
 
 ## What is the average daily activity pattern?
 
