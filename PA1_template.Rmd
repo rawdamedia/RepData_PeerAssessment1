@@ -1,8 +1,9 @@
 ---
 title: "Reproducible Research: Peer Assessment 1"
 date: "`r Sys.Date()`"
-output: html_document
-keep_md: true
+output: 
+    html_document: 
+        keep_md: true
 ---
 ## Documenting the current environment
 
@@ -23,6 +24,7 @@ sessionInfo()
 ```
 
 ## Loading and preprocessing the data
+
 Need to unzip the supplied file, read it into memory, and then clean up the
 unzipped files.
 
@@ -34,6 +36,7 @@ file.remove(c(list.files(path = "unzipped", recursive = TRUE, full.names = TRUE)
 ```
 
 ## What is mean total number of steps taken per day?
+
 There are a lot of NA's in the step count:
 ```{r display_na}
 str(activity)
@@ -45,12 +48,13 @@ daily_totals
 ```
 This allows me to plot the required histogram:
 ```{r daily_totals_hist}
-hist(daily_totals$total)
+hist(daily_totals$total, breaks=25L, col="dark blue", 
+     main="Frequency distribution of the total number of steps per day")
 ```
 
-The mean number of steps is `r format(mean(daily_totals$total), scientific=F, big.mark=",")`.  
+The mean number of steps per day is `r format(mean(daily_totals$total), scientific=F, big.mark=",")` steps.  
 
-The median number of steps is `r format(median(daily_totals$total), scientific=F, big.mark=",")`.  
+The median number of steps per day is `r format(median(daily_totals$total), scientific=F, big.mark=",")` steps.  
 
 ## What is the average daily activity pattern?
 
