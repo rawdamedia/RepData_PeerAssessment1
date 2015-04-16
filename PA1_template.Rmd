@@ -61,9 +61,14 @@ The median number of steps per day is `r format(median(daily_totals$total), scie
 In order to answer this part, the steps are fairly similar to the one above, 
 except that I need to group by the interval, and summarise by taking the mean:
 
-```{r activity_pattern}
+```{r activity_pattern, fig.width=10, fig.height=7}
 activity_pattern <- activity %>% group_by(interval) %>% na.omit %>% summarise(average_steps = mean(steps))
-plot(activity_pattern$interval, activity_pattern$average_steps, type="l", col="blue")
+
+plot(activity_pattern$interval, activity_pattern$average_steps, 
+     type="l", col="blue",
+     main="Average level of activity during the day",
+     xlab="5 min time interval\n(number denotes how many minutes after midnight this interval starts)",
+     ylab="Average number of steps taken during the given 5 minute interval")
 ```
 
 
