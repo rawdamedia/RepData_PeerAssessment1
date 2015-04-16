@@ -1,4 +1,5 @@
 # Reproducible Research: Peer Assessment 1
+`r Sys.Date()`  
 ## Documenting the current environment
 
 I know this was not part of the template for this assignment, but Prof Peng 
@@ -31,8 +32,20 @@ sessionInfo()
 ```
 
 ## Loading and preprocessing the data
+Need to unzip the supplied file, read it into memory, and then clean up the
+unzipped files.
 
 
+```r
+unzip("activity.zip", exdir = "unzipped")
+activity <- read.csv("unzipped/activity.csv")
+file.remove(c(list.files(path = "unzipped", recursive = TRUE, full.names = TRUE),
+                      "unzipped"))
+```
+
+```
+## [1] TRUE TRUE
+```
 
 ## What is mean total number of steps taken per day?
 
