@@ -71,6 +71,14 @@ plot(activity_pattern$interval, activity_pattern$average_steps,
      ylab="Average number of steps taken during the given 5 minute interval")
 ```
 
+```{r max_interval}
+# calculate the interval that has the maximum average number of steps
+max_interval <- activity_pattern$interval[activity_pattern$average_steps==max(activity_pattern$average_steps)]
+
+```
+
+It looks like the most number of steps occur during the 5 minute interval starting at `r max_interval` hours.
+
 
 ## Imputing missing values
 
