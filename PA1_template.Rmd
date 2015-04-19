@@ -18,6 +18,8 @@ section to remind myself later how to do this...
 ```{r session_info}
 # first load the required libraries
 library(dplyr)
+library(lubridate)
+library(stringr)
 
 # then generate the snapshot of the environment used
 sessionInfo()
@@ -26,13 +28,34 @@ sessionInfo()
 ## Loading and preprocessing the data
 
 Need to unzip the supplied file, read it into memory, and then clean up the
-unzipped files.
+unzipped files.  The time interval is currently an integer, but actually seems 
+to represent a time that, if padded with 0 to a width of 4, would be in the
+format 'hhmm'.  I will therefore process the interval field into time objects from
+the 'chron' package.
 
 ```{r read_data}
-unzip("activity.zip", exdir = "unzipped")
-activity <- read.csv("unzipped/activity.csv")
-file.remove(c(list.files(path = "unzipped", recursive = TRUE, full.names = TRUE),
-                      "unzipped"))
+read_activity <- function() {
+    unzip("activity.zip", exdir = "unzipped")
+    activity <- read.csv("unzipped/activity.csv")
+    file.remove(c(list.files(path = "unzipped", recursive = TRUE, full.names = TRUE),
+                  "unzipped"))
+    return(activity)
+    }
+
+format_as_time <- function(lst) {
+    outval <- NULL
+    for (x in lst) {
+        outval <- c(outval,
+                    x %>%
+                        as.character %>%
+                        str_pad(width=4,side="left",pad="0")
+                    )
+    }
+    return(sub( '(?<=.{2})', ':', outval, perl=TRUE ))
+}
+
+activity <- read_activity()
+activity$interval <- format_as_time(activity$interval)
 ```
 
 ## What is mean total number of steps taken per day?
@@ -64,10 +87,10 @@ except that I need to group by the interval, and summarise by taking the mean:
 ```{r activity_pattern, fig.width=10, fig.height=7}
 activity_pattern <- activity %>% group_by(interval) %>% na.omit %>% summarise(average_steps = mean(steps))
 
-plot(activity_pattern$interval, activity_pattern$average_steps, 
+plot(strptime(activity_pattern$interval, format = "%H:%M"), activity_pattern$average_steps, 
      type="l", col="blue",
      main="Average level of activity during the day",
-     xlab="5 min time interval\n(number denotes how many minutes after midnight this interval starts)",
+     xlab="time of day (each data point represents a 5 minute period)",
      ylab="Average number of steps taken during the given 5 minute interval")
 ```
 
