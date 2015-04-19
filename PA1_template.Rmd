@@ -105,6 +105,26 @@ It looks like the most number of steps occur during the 5 minute interval starti
 
 ## Imputing missing values
 
+The activity data has `r sum(is.na(activity$steps))` rows that contain 'NA'.
+
+For this part of the assignment, I will fill each 'NA' with the mean for that 
+time period (as calculated in the previous section):
+
+```{r replace_na}
+for (i in 1:nrow(activity)) {
+    if (is.na(activity$steps[i])) {
+        intrvl <- activity$interval[i]
+        activity$steps[i] <- activity_pattern$average_steps[activity_pattern$interval == intrvl]
+        }
+    }
+
+if (anyNA(activity$steps)) {
+    print("There was a problem with replacing the NA values")
+    } 
+else {
+    print("All NA values have been successfully replaced")
+    }
+```
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
