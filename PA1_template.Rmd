@@ -66,12 +66,12 @@ str(activity)
 ```
 I will therefore remove the NA's before calculating the daily total step count:
 ```{r daily_totals}
-day_totals <- function(activity) {
-    return(activity %>% group_by(date) %>% na.omit %>% summarise(total = sum(steps)))
+day_totals <- function(activ) {
+    return(activ %>% group_by(date) %>% na.omit %>% summarise(total = sum(steps)))
     }
 
 
-daily_totals <- day_totals(activity)
+daily_totals <- day_totals(activity)$total
 ```
 This allows me to plot the required histogram:
 ```{r daily_totals_hist}
@@ -81,12 +81,12 @@ make_hist <- function(x) {
     }
 
 
-make_hist(daily_totals$total)
+make_hist(daily_totals)
 ```
 
-The mean number of steps per day is `r format(mean(daily_totals$total), scientific=F, big.mark=",")` steps.  
+The mean number of steps per day is `r format(mean(daily_totals), scientific=F, big.mark=",")` steps.  
 
-The median number of steps per day is `r format(median(daily_totals$total), scientific=F, big.mark=",")` steps.  
+The median number of steps per day is `r format(median(daily_totals), scientific=F, big.mark=",")` steps.  
 
 ## What is the average daily activity pattern?
 
@@ -121,20 +121,23 @@ time period (as calculated in the previous section):
 
 ```{r replace_na}
 replace_na <- function () {
-  for (i in 1:nrow(activity)) {
-      if (is.na(activity$steps[i])) {
-          intrvl <- activity$interval[i]
-          activity$steps[i] <- activity_pattern$average_steps[activity_pattern$interval == intrvl]
-          }
-      }
-if (anyNA(activity$steps)) {
-    return("There was a problem with replacing the NA values")
-    } else {
-    return("All NA values have been successfully replaced")
+    for (i in 1:nrow(activity)) {
+        if (is.na(activity$steps[i])) {
+            intrvl <- activity$interval[i]
+            activity$steps[i] <- activity_pattern$average_steps[activity_pattern$interval == intrvl]
+            }
+        }
+    if (anyNA(activity$steps)) {
+        return("There was a problem with replacing the NA values")
+        } else {
+            return("All NA values have been successfully replaced")
+            }
     }
-}
+
 
 print(replace_na())
+
+make_hist(day_totals(activity)$total)
 ```
 
 
