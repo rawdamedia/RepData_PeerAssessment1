@@ -18,7 +18,6 @@ section to remind myself later how to do this...
 ```{r session_info}
 # first load the required libraries
 library(dplyr)
-library(lubridate)
 library(stringr)
 
 # then generate the snapshot of the environment used
@@ -30,8 +29,8 @@ sessionInfo()
 Need to unzip the supplied file, read it into memory, and then clean up the
 unzipped files.  The time interval is currently an integer, but actually seems 
 to represent a time that, if padded with 0 to a width of 4, would be in the
-format 'hhmm'.  I will therefore process the interval field into time objects from
-the 'chron' package.
+format 'hhmm'.  I will therefore process the interval field into strings in the 
+format 'hh:mm' which can more easily be converted into a time-value later.
 
 ```{r read_data}
 read_activity <- function() {
@@ -134,11 +133,21 @@ replace_na <- function () {
             }
     }
 
+old_nr <- length(na.omit(activity))
+old_mean <- mean(daily_totals)
+old_median <- median(daily_totals)
 
 print(replace_na())
-
-make_hist(day_totals(activity)$total)
+daily_totals <- day_totals(activity)$total
+if (length(na.omit(activity))==old_nr) {
+    make_hist(daily_totals)
+    } else {pring("THERE WAS A PROBLEM")}
 ```
+
+The mean number of steps per day is now `r format(mean(daily_totals), scientific=F, big.mark=",")` steps, compared to `r format(old_mean, scientific=F, big.mark=",")` when the NA values were ignored rather than filled in.  
+
+The median number of steps per day is now `r format(median(daily_totals), scientific=F, big.mark=",")` steps, compared to `r format(old_median, scientific=F, big.mark=",")` when the NA values were ignored rather than filled in.  
+
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
