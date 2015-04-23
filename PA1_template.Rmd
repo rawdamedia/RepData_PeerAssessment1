@@ -148,6 +148,7 @@ The mean number of steps per day is now `r format(mean(daily_totals), scientific
 
 The median number of steps per day is now `r format(median(daily_totals), scientific=F, big.mark=",")` steps, compared to `r format(old_median, scientific=F, big.mark=",")` when the NA values were ignored rather than filled in.  
 
-
+So, as you can see, because I added values to the analysis that were the mean values
+for each timeslot, there has been no change to the mean at all, and the median has been dragged closer to the mean.
 
 ## Are there differences in activity patterns between weekdays and weekends?
