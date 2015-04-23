@@ -119,7 +119,7 @@ For this part of the assignment, I will fill each 'NA' with the mean for that
 time period (as calculated in the previous section):
 
 ```{r replace_na}
-replace_na <- function () {
+replace_na <- function (activity) {
     for (i in 1:nrow(activity)) {
         if (is.na(activity$steps[i])) {
             intrvl <- activity$interval[i]
@@ -129,7 +129,7 @@ replace_na <- function () {
     if (anyNA(activity$steps)) {
         return("There was a problem with replacing the NA values")
         } else {
-            return("All NA values have been successfully replaced")
+            return(activity)
             }
     }
 
@@ -137,11 +137,11 @@ old_nr <- length(na.omit(activity))
 old_mean <- mean(daily_totals)
 old_median <- median(daily_totals)
 
-print(replace_na())
+activity <- (replace_na(activity))
 daily_totals <- day_totals(activity)$total
 if (length(na.omit(activity))==old_nr) {
     make_hist(daily_totals)
-    } else {pring("THERE WAS A PROBLEM")}
+    } else {print("THERE WAS A PROBLEM")}
 ```
 
 The mean number of steps per day is now `r format(mean(daily_totals), scientific=F, big.mark=",")` steps, compared to `r format(old_mean, scientific=F, big.mark=",")` when the NA values were ignored rather than filled in.  
