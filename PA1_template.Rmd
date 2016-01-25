@@ -111,7 +111,7 @@ max_interval <- activity_pattern$interval[activity_pattern$average_steps==max(ac
 It looks like the most number of steps occur during the 5 minute interval starting at `r max_interval` hours.
 
 
-## Imputing missing values
+## Inputing missing values
 
 The activity data has `r sum(is.na(activity$steps))` rows that contain 'NA'.
 
@@ -137,14 +137,14 @@ old_nr <- length(na.omit(activity))
 old_mean <- mean(daily_totals)
 old_median <- median(daily_totals)
 
-activity <- (replace_na(activity))
-daily_totals <- day_totals(activity)$total
-if (length(na.omit(activity))==old_nr) {
+activity2 <- (replace_na(activity))
+daily_totals <- day_totals(activity2)$total
+if (length(na.omit(activity2))==old_nr) {
     make_hist(daily_totals)
     } else {print("THERE WAS A PROBLEM")}
 ```
 
-The mean number of steps per day is now `r format(mean(daily_totals), scientific=F, big.mark=",")` steps, compared to `r format(old_mean, scientific=F, big.mark=",")` when the NA values were ignored rather than filled in.  
+The mean number of steps per day is now `r format(mean(daily_totals), scientific=F, big.mark=",")` steps, compared to `r format(old_mean, scientific=F, big.mark=",")` when the NA values were ignored rather than filled in. 
 
 The median number of steps per day is now `r format(median(daily_totals), scientific=F, big.mark=",")` steps, compared to `r format(old_median, scientific=F, big.mark=",")` when the NA values were ignored rather than filled in.  
 
@@ -152,3 +152,41 @@ So, as you can see, because I added values to the analysis that were the mean va
 for each timeslot, there has been no change to the mean at all, and the median has been dragged closer to the mean.
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+First I define a function for classifying a day of the week into either "weekend" ("Saturday" or "Sunday") or "weekday" (all other days):
+```{r weekend_function}
+weekend_or_weekday <- function(day) {
+    weekend.days <- c("Saturday", "Sunday")
+    if (day %in% weekend.days) {
+        return(as.factor("weekend"))
+    } else {
+        return(as.factor("weekday"))
+    }
+}
+```
+
+I can therefore now add a factor to the data that classifies the date as beeing either on a "weekend" or "weekday":
+
+```{r weekend_factor}
+day_or_end <- sapply(weekdays(as.Date(activity$date)), weekend_or_weekday , USE.NAMES = F)
+
+activity3 <- cbind(activity, day_or_end)
+activity_pattern3 <- activity3 %>% group_by(interval, day_or_end) %>% na.omit %>% summarise(average_steps = mean(steps))
+
+activity_pattern3$interval <- sapply(strsplit(activity_pattern3$interval,":"),
+  function(x) {
+    x <- as.numeric(x)
+    x[1]+x[2]/60
+    }
+)
+
+```
+
+This now allows me to plot the average activity profile on weekdays compared to weekends:
+
+```{r activity_pattern_weekend, fig.width=10, fig.height=7}
+library(lattice)
+
+xyplot(average_steps ~ interval | day_or_end, data=activity_pattern3, type="l", layout=c(1,2), xlab = "Time interval (hours of the day)", ylab = "Average number of steps in each 5 min time interval")
+
+```
