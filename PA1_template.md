@@ -164,7 +164,7 @@ max_interval <- activity_pattern$interval[activity_pattern$average_steps==max(ac
 It looks like the most number of steps occur during the 5 minute interval starting at 08:35 hours.
 
 
-## Inputing missing values
+## Imputing missing values
 
 The activity data has 2304 rows that contain 'NA'.
 
